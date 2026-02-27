@@ -3,21 +3,21 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "33fe7500",
+   "id": "23c75e9c",
    "metadata": {
     "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
     "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
     "execution": {
-     "iopub.execute_input": "2026-02-19T07:29:09.991602Z",
-     "iopub.status.busy": "2026-02-19T07:29:09.991192Z",
-     "iopub.status.idle": "2026-02-19T07:29:14.152488Z",
-     "shell.execute_reply": "2026-02-19T07:29:14.151335Z"
+     "iopub.execute_input": "2026-02-27T11:49:46.505389Z",
+     "iopub.status.busy": "2026-02-27T11:49:46.505161Z",
+     "iopub.status.idle": "2026-02-27T11:49:57.115835Z",
+     "shell.execute_reply": "2026-02-27T11:49:57.115210Z"
     },
     "papermill": {
-     "duration": 4.168732,
-     "end_time": "2026-02-19T07:29:14.154934",
+     "duration": 10.615767,
+     "end_time": "2026-02-27T11:49:57.117522",
      "exception": false,
-     "start_time": "2026-02-19T07:29:09.986202",
+     "start_time": "2026-02-27T11:49:46.501755",
      "status": "completed"
     },
     "tags": []
@@ -28,70 +28,92 @@
     "\n",
     "import os\n",
     "import random\n",
-    "import librosa\n",
     "import numpy as np\n",
     "import pandas as pd\n",
-    "from pathlib import Path\n",
-    "from sklearn.preprocessing import LabelEncoder\n",
-    "from sklearn.model_selection import train_test_split\n",
-    "from sklearn.metrics import f1_score\n",
-    "from catboost import CatBoostClassifier"
+    "import librosa\n",
+    "import torch\n",
+    "import torch.nn as nn\n",
+    "import torch.optim as optim\n",
+    "from torch.utils.data import Dataset, DataLoader\n",
+    "from sklearn.metrics import f1_score"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "834713ef",
+   "id": "8f8caf86",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-19T07:29:14.162049Z",
-     "iopub.status.busy": "2026-02-19T07:29:14.161528Z",
-     "iopub.status.idle": "2026-02-19T07:29:14.168760Z",
-     "shell.execute_reply": "2026-02-19T07:29:14.167608Z"
+     "iopub.execute_input": "2026-02-27T11:49:57.122835Z",
+     "iopub.status.busy": "2026-02-27T11:49:57.122481Z",
+     "iopub.status.idle": "2026-02-27T11:49:57.128732Z",
+     "shell.execute_reply": "2026-02-27T11:49:57.127953Z"
     },
     "papermill": {
-     "duration": 0.013545,
-     "end_time": "2026-02-19T07:29:14.171004",
+     "duration": 0.010479,
+     "end_time": "2026-02-27T11:49:57.130146",
      "exception": false,
-     "start_time": "2026-02-19T07:29:14.157459",
+     "start_time": "2026-02-27T11:49:57.119667",
      "status": "completed"
     },
     "tags": []
    },
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "cpu\n"
+     ]
+    }
+   ],
    "source": [
     "# Configuration\n",
     "\n",
     "DATA_SEED = 67\n",
     "TRAINING_SEED = 1234\n",
+    "\n",
+    "# Audio\n",
     "SR = 22050\n",
     "DURATION = 5.0\n",
     "TOP_DB = 20\n",
+    "N_MELS = 128\n",
+    "N_FFT = 2048\n",
+    "HOP_LENGTH = 512\n",
+    "\n",
+    "# Training\n",
+    "BATCH_SIZE = 32\n",
+    "EPOCHS = 20\n",
+    "LEARNING_RATE = 0.001\n",
+    "\n",
     "DATA_ROOT = '/kaggle/input/jan-2026-dl-gen-ai-project/messy_mashup'\n",
     "GENRES = ['blues', 'classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock']\n",
     "STEMS = {'drums': 'drums.wav', 'vocals': 'vocals.wav', 'bass': 'bass.wav', 'other': 'other.wav'}\n",
     "STEM_KEYS = ['drums', 'vocals', 'bass', 'other']\n",
     "\n",
     "random.seed(DATA_SEED)\n",
-    "np.random.seed(DATA_SEED)"
+    "np.random.seed(DATA_SEED)\n",
+    "\n",
+    "DEVICE = torch.device(\"cpu\")  \n",
+    "print(DEVICE)"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "177af29f",
+   "id": "f2c2be2c",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-19T07:29:14.177699Z",
-     "iopub.status.busy": "2026-02-19T07:29:14.177241Z",
-     "iopub.status.idle": "2026-02-19T07:29:14.188892Z",
-     "shell.execute_reply": "2026-02-19T07:29:14.187669Z"
+     "iopub.execute_input": "2026-02-27T11:49:57.135453Z",
+     "iopub.status.busy": "2026-02-27T11:49:57.134806Z",
+     "iopub.status.idle": "2026-02-27T11:49:57.142121Z",
+     "shell.execute_reply": "2026-02-27T11:49:57.141571Z"
     },
     "papermill": {
-     "duration": 0.017936,
-     "end_time": "2026-02-19T07:29:14.191281",
+     "duration": 0.011326,
+     "end_time": "2026-02-27T11:49:57.143380",
      "exception": false,
-     "start_time": "2026-02-19T07:29:14.173345",
+     "start_time": "2026-02-27T11:49:57.132054",
      "status": "completed"
     },
     "tags": []
@@ -145,19 +167,19 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "cd3be85b",
+   "id": "976f7824",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-19T07:29:14.198223Z",
-     "iopub.status.busy": "2026-02-19T07:29:14.197559Z",
-     "iopub.status.idle": "2026-02-19T07:29:14.206063Z",
-     "shell.execute_reply": "2026-02-19T07:29:14.204965Z"
+     "iopub.execute_input": "2026-02-27T11:49:57.148169Z",
+     "iopub.status.busy": "2026-02-27T11:49:57.147955Z",
+     "iopub.status.idle": "2026-02-27T11:49:57.153622Z",
+     "shell.execute_reply": "2026-02-27T11:49:57.153054Z"
     },
     "papermill": {
-     "duration": 0.014153,
-     "end_time": "2026-02-19T07:29:14.208117",
+     "duration": 0.009453,
+     "end_time": "2026-02-27T11:49:57.154884",
      "exception": false,
-     "start_time": "2026-02-19T07:29:14.193964",
+     "start_time": "2026-02-27T11:49:57.145431",
      "status": "completed"
     },
     "tags": []
@@ -193,63 +215,228 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "9f07fe60",
+   "id": "8b4f67fb",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-19T07:29:14.214142Z",
-     "iopub.status.busy": "2026-02-19T07:29:14.213791Z",
-     "iopub.status.idle": "2026-02-19T07:29:14.222128Z",
-     "shell.execute_reply": "2026-02-19T07:29:14.220811Z"
+     "iopub.execute_input": "2026-02-27T11:49:57.159450Z",
+     "iopub.status.busy": "2026-02-27T11:49:57.159205Z",
+     "iopub.status.idle": "2026-02-27T11:49:57.165500Z",
+     "shell.execute_reply": "2026-02-27T11:49:57.164927Z"
     },
     "papermill": {
-     "duration": 0.014511,
-     "end_time": "2026-02-19T07:29:14.224977",
+     "duration": 0.010192,
+     "end_time": "2026-02-27T11:49:57.166899",
      "exception": false,
-     "start_time": "2026-02-19T07:29:14.210466",
+     "start_time": "2026-02-27T11:49:57.156707",
      "status": "completed"
     },
     "tags": []
    },
    "outputs": [],
    "source": [
-    "# Feature Extraction\n",
+    "# Dataset\n",
     "\n",
-    "def extract_mashup_features(dataset_dict, num_samples=100):\n",
-    "    features = []\n",
-    "    for genre in GENRES:\n",
-    "        for _ in range(num_samples):\n",
-    "            mix = np.zeros(int(SR * DURATION))\n",
-    "            for key in STEM_KEYS:\n",
-    "                path = random.choice(dataset_dict[genre][key])\n",
-    "                y, _ = librosa.load(path, sr=SR, duration=DURATION)\n",
-    "                mix += y\n",
-    "            \n",
-    "            mfcc = np.mean(librosa.feature.mfcc(y=mix, sr=SR, n_mfcc=13), axis=1)\n",
-    "            centroid = np.mean(librosa.feature.spectral_centroid(y=mix, sr=SR))\n",
-    "            \n",
-    "            row = {f'mfcc_{i}': val for i, val in enumerate(mfcc)}\n",
-    "            row.update({'centroid': centroid, 'label': genre})\n",
-    "            features.append(row)\n",
-    "            \n",
-    "    return pd.DataFrame(features)"
+    "class MashupDataset(Dataset):\n",
+    "    def __init__(self, dataset_dict, genres, stem_keys, samples_per_genre=200):\n",
+    "        self.dataset_dict = dataset_dict\n",
+    "        self.genres = genres\n",
+    "        self.stem_keys = stem_keys\n",
+    "        self.samples = []\n",
+    "\n",
+    "        for idx, genre in enumerate(genres):\n",
+    "            for _ in range(samples_per_genre):\n",
+    "                self.samples.append((idx, genre))\n",
+    "\n",
+    "    def __len__(self):\n",
+    "        return len(self.samples)\n",
+    "\n",
+    "    def __getitem__(self, idx):\n",
+    "        genre_idx, genre_name = self.samples[idx]\n",
+    "        mix = np.zeros(int(SR * DURATION))\n",
+    "\n",
+    "        for key in self.stem_keys:\n",
+    "            path = random.choice(self.dataset_dict[genre_name][key])\n",
+    "            y, _ = librosa.load(path, sr=SR, duration=DURATION)\n",
+    "\n",
+    "            if len(y) < len(mix):\n",
+    "                y = np.pad(y, (0, len(mix) - len(y)))\n",
+    "\n",
+    "            mix += y * random.uniform(0.8, 1.2)\n",
+    "\n",
+    "        mel = librosa.feature.melspectrogram(\n",
+    "            y=mix,\n",
+    "            sr=SR,\n",
+    "            n_fft=N_FFT,\n",
+    "            hop_length=HOP_LENGTH,\n",
+    "            n_mels=N_MELS\n",
+    "        )\n",
+    "\n",
+    "        mel_db = librosa.power_to_db(mel, ref=np.max)\n",
+    "        mel_db = (mel_db + 40.0) / 40.0\n",
+    "\n",
+    "        tensor = torch.tensor(mel_db, dtype=torch.float32).unsqueeze(0)\n",
+    "\n",
+    "        return tensor, genre_idx"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "9d82629d",
+   "id": "4bbf1378",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-19T07:29:14.231687Z",
-     "iopub.status.busy": "2026-02-19T07:29:14.231323Z",
-     "iopub.status.idle": "2026-02-19T07:37:34.952559Z",
-     "shell.execute_reply": "2026-02-19T07:37:34.950925Z"
+     "iopub.execute_input": "2026-02-27T11:49:57.171795Z",
+     "iopub.status.busy": "2026-02-27T11:49:57.171360Z",
+     "iopub.status.idle": "2026-02-27T11:49:57.176865Z",
+     "shell.execute_reply": "2026-02-27T11:49:57.176188Z"
     },
     "papermill": {
-     "duration": 500.732397,
-     "end_time": "2026-02-19T07:37:34.959818",
+     "duration": 0.009305,
+     "end_time": "2026-02-27T11:49:57.178121",
      "exception": false,
-     "start_time": "2026-02-19T07:29:14.227421",
+     "start_time": "2026-02-27T11:49:57.168816",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# CNN \n",
+    "\n",
+    "class GenreCNN(nn.Module):\n",
+    "    def __init__(self, num_classes=len(GENRES)):\n",
+    "        super().__init__()\n",
+    "\n",
+    "        self.features = nn.Sequential(\n",
+    "            nn.Conv2d(1, 16, 3, padding=1),\n",
+    "            nn.BatchNorm2d(16),\n",
+    "            nn.ReLU(),\n",
+    "            nn.MaxPool2d(2),\n",
+    "\n",
+    "            nn.Conv2d(16, 32, 3, padding=1),\n",
+    "            nn.BatchNorm2d(32),\n",
+    "            nn.ReLU(),\n",
+    "            nn.MaxPool2d(2),\n",
+    "\n",
+    "            nn.Conv2d(32, 64, 3, padding=1),\n",
+    "            nn.BatchNorm2d(64),\n",
+    "            nn.ReLU(),\n",
+    "            nn.MaxPool2d(2),\n",
+    "        )\n",
+    "\n",
+    "        self.classifier = nn.Sequential(\n",
+    "            nn.Flatten(),\n",
+    "            nn.Linear(64 * 16 * 27, 128),\n",
+    "            nn.ReLU(),\n",
+    "            nn.Dropout(0.3),\n",
+    "            nn.Linear(128, num_classes)\n",
+    "        )\n",
+    "\n",
+    "    def forward(self, x):\n",
+    "        x = self.features(x)\n",
+    "        return self.classifier(x)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "91c90ee4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-02-27T11:49:57.182937Z",
+     "iopub.status.busy": "2026-02-27T11:49:57.182564Z",
+     "iopub.status.idle": "2026-02-27T11:49:57.186597Z",
+     "shell.execute_reply": "2026-02-27T11:49:57.186016Z"
+    },
+    "papermill": {
+     "duration": 0.007886,
+     "end_time": "2026-02-27T11:49:57.187871",
+     "exception": false,
+     "start_time": "2026-02-27T11:49:57.179985",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Training Function\n",
+    "\n",
+    "def train_one_epoch(model, loader, criterion, optimizer):\n",
+    "    model.train()\n",
+    "    total_loss = 0\n",
+    "\n",
+    "    for inputs, labels in loader:\n",
+    "        inputs = inputs.to(DEVICE)\n",
+    "        labels = labels.to(DEVICE)\n",
+    "\n",
+    "        optimizer.zero_grad()\n",
+    "        outputs = model(inputs)\n",
+    "        loss = criterion(outputs, labels)\n",
+    "        loss.backward()\n",
+    "        optimizer.step()\n",
+    "\n",
+    "        total_loss += loss.item()\n",
+    "\n",
+    "    return total_loss / len(loader)\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "a3fb50ea",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-02-27T11:49:57.192644Z",
+     "iopub.status.busy": "2026-02-27T11:49:57.192195Z",
+     "iopub.status.idle": "2026-02-27T11:49:57.196497Z",
+     "shell.execute_reply": "2026-02-27T11:49:57.195824Z"
+    },
+    "papermill": {
+     "duration": 0.008177,
+     "end_time": "2026-02-27T11:49:57.197895",
+     "exception": false,
+     "start_time": "2026-02-27T11:49:57.189718",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Evalutation Function\n",
+    "\n",
+    "def evaluate(model, loader):\n",
+    "    model.eval()\n",
+    "    all_preds, all_labels = [], []\n",
+    "\n",
+    "    with torch.no_grad():\n",
+    "        for inputs, labels in loader:\n",
+    "            inputs = inputs.to(DEVICE)\n",
+    "            outputs = model(inputs)\n",
+    "            preds = torch.argmax(outputs, dim=1)\n",
+    "\n",
+    "            all_preds.extend(preds.cpu().numpy())\n",
+    "            all_labels.extend(labels.numpy())\n",
+    "\n",
+    "    return f1_score(all_labels, all_preds, average='macro')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "e323efce",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-02-27T11:49:57.202829Z",
+     "iopub.status.busy": "2026-02-27T11:49:57.202311Z",
+     "iopub.status.idle": "2026-02-27T11:50:05.872361Z",
+     "shell.execute_reply": "2026-02-27T11:50:05.871657Z"
+    },
+    "papermill": {
+     "duration": 8.674113,
+     "end_time": "2026-02-27T11:50:05.873922",
+     "exception": false,
+     "start_time": "2026-02-27T11:49:57.199809",
      "status": "completed"
     },
     "tags": []
@@ -268,59 +455,43 @@
       "Genre: metal      | Train:  83 | Val:  17\n",
       "Genre: pop        | Train:  83 | Val:  17\n",
       "Genre: reggae     | Train:  83 | Val:  17\n",
-      "Genre: rock       | Train:  83 | Val:  17\n",
-      "Total files with >= 5s silence: 2094\n",
-      "\n",
-      "Training...\n"
+      "Genre: rock       | Train:  83 | Val:  17\n"
      ]
-    },
-    {
-     "data": {
-      "text/plain": [
-       "<catboost.core.CatBoostClassifier at 0x7f98983a7fb0>"
-      ]
-     },
-     "execution_count": 6,
-     "metadata": {},
-     "output_type": "execute_result"
     }
    ],
    "source": [
-    "# Model Building Pipeline\n",
+    "# Build data\n",
     "\n",
-    "tr, val = build_dataset(DATA_ROOT)\n",
+    "train_dict, val_dict = build_dataset(DATA_ROOT)\n",
     "\n",
-    "df_silence = find_long_silences(tr)\n",
-    "print(f\"Total files with >= 5s silence: {len(df_silence)}\")\n",
+    "train_loader = DataLoader(\n",
+    "    MashupDataset(train_dict, GENRES, STEM_KEYS),\n",
+    "    batch_size=BATCH_SIZE,\n",
+    "    shuffle=True\n",
+    ")\n",
     "\n",
-    "print(\"\\nTraining...\")\n",
-    "df_train = extract_mashup_features(tr, num_samples=50)\n",
-    "X = df_train.drop('label', axis=1)\n",
-    "le = LabelEncoder()\n",
-    "y = le.fit_transform(df_train['label'])\n",
-    "\n",
-    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=TRAINING_SEED)\n",
-    "\n",
-    "clf = CatBoostClassifier(iterations=300, depth=6, verbose=0, loss_function='MultiClass')\n",
-    "clf.fit(X_train, y_train)"
+    "val_loader = DataLoader(\n",
+    "    MashupDataset(val_dict, GENRES, STEM_KEYS, samples_per_genre=50),\n",
+    "    batch_size=BATCH_SIZE\n",
+    ")"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 7,
-   "id": "dfc19128",
+   "execution_count": 10,
+   "id": "f93ac563",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-19T07:37:34.970382Z",
-     "iopub.status.busy": "2026-02-19T07:37:34.968874Z",
-     "iopub.status.idle": "2026-02-19T07:39:32.295792Z",
-     "shell.execute_reply": "2026-02-19T07:39:32.294634Z"
+     "iopub.execute_input": "2026-02-27T11:50:05.879750Z",
+     "iopub.status.busy": "2026-02-27T11:50:05.879506Z",
+     "iopub.status.idle": "2026-02-27T12:53:12.423169Z",
+     "shell.execute_reply": "2026-02-27T12:53:12.422294Z"
     },
     "papermill": {
-     "duration": 117.33577,
-     "end_time": "2026-02-19T07:39:32.298765",
+     "duration": 3786.551672,
+     "end_time": "2026-02-27T12:53:12.428031",
      "exception": false,
-     "start_time": "2026-02-19T07:37:34.962995",
+     "start_time": "2026-02-27T11:50:05.876359",
      "status": "completed"
     },
     "tags": []
@@ -330,81 +501,61 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "--- Processing 3020 Test Mashups ---\n",
-      "Processed 100/3020 files...\n",
-      "Processed 200/3020 files...\n",
-      "Processed 300/3020 files...\n",
-      "Processed 400/3020 files...\n",
-      "Processed 500/3020 files...\n",
-      "Processed 600/3020 files...\n",
-      "Processed 700/3020 files...\n",
-      "Processed 800/3020 files...\n",
-      "Processed 900/3020 files...\n",
-      "Processed 1000/3020 files...\n",
-      "Processed 1100/3020 files...\n",
-      "Processed 1200/3020 files...\n",
-      "Processed 1300/3020 files...\n",
-      "Processed 1400/3020 files...\n",
-      "Processed 1500/3020 files...\n",
-      "Processed 1600/3020 files...\n",
-      "Processed 1700/3020 files...\n",
-      "Processed 1800/3020 files...\n",
-      "Processed 1900/3020 files...\n",
-      "Processed 2000/3020 files...\n",
-      "Processed 2100/3020 files...\n",
-      "Processed 2200/3020 files...\n",
-      "Processed 2300/3020 files...\n",
-      "Processed 2400/3020 files...\n",
-      "Processed 2500/3020 files...\n",
-      "Processed 2600/3020 files...\n",
-      "Processed 2700/3020 files...\n",
-      "Processed 2800/3020 files...\n",
-      "Processed 2900/3020 files...\n",
-      "Processed 3000/3020 files...\n"
+      "Epoch 1/20 | Loss: 3.0334 | Val Macro F1: 0.1773\n",
+      "Epoch 2/20 | Loss: 2.1012 | Val Macro F1: 0.1692\n",
+      "Epoch 3/20 | Loss: 1.9666 | Val Macro F1: 0.1327\n",
+      "Epoch 4/20 | Loss: 1.8427 | Val Macro F1: 0.2494\n",
+      "Epoch 5/20 | Loss: 1.7051 | Val Macro F1: 0.3684\n",
+      "Epoch 6/20 | Loss: 1.6791 | Val Macro F1: 0.2992\n",
+      "Epoch 7/20 | Loss: 1.6491 | Val Macro F1: 0.3905\n",
+      "Epoch 8/20 | Loss: 1.5303 | Val Macro F1: 0.4252\n",
+      "Epoch 9/20 | Loss: 1.5149 | Val Macro F1: 0.3112\n",
+      "Epoch 10/20 | Loss: 1.4939 | Val Macro F1: 0.4314\n",
+      "Epoch 11/20 | Loss: 1.4650 | Val Macro F1: 0.3868\n",
+      "Epoch 12/20 | Loss: 1.4421 | Val Macro F1: 0.4768\n",
+      "Epoch 13/20 | Loss: 1.4700 | Val Macro F1: 0.4789\n",
+      "Epoch 14/20 | Loss: 1.4413 | Val Macro F1: 0.4363\n",
+      "Epoch 15/20 | Loss: 1.3948 | Val Macro F1: 0.4480\n",
+      "Epoch 16/20 | Loss: 1.4031 | Val Macro F1: 0.4773\n",
+      "Epoch 17/20 | Loss: 1.3748 | Val Macro F1: 0.4736\n",
+      "Epoch 18/20 | Loss: 1.3297 | Val Macro F1: 0.4785\n",
+      "Epoch 19/20 | Loss: 1.3298 | Val Macro F1: 0.5104\n",
+      "Epoch 20/20 | Loss: 1.3019 | Val Macro F1: 0.4142\n"
      ]
     }
    ],
    "source": [
-    "test_df = pd.read_csv('/kaggle/input/jan-2026-dl-gen-ai-project/messy_mashup/test.csv') \n",
-    "test_features = []\n",
+    "# Model Training \n",
     "\n",
-    "print(f\"--- Processing {len(test_df)} Test Mashups ---\")\n",
+    "model = GenreCNN().to(DEVICE)\n",
+    "criterion = nn.CrossEntropyLoss()\n",
+    "optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)\n",
     "\n",
-    "for index, row in test_df.iterrows():\n",
-    "    file_path = os.path.join(DATA_ROOT, row['filename'])\n",
-    "    \n",
-    "    try:\n",
-    "        y, _ = librosa.load(file_path, sr=SR, duration=DURATION)\n",
-    "        \n",
-    "        mfcc = np.mean(librosa.feature.mfcc(y=y, sr=SR, n_mfcc=13), axis=1)\n",
-    "        centroid = np.mean(librosa.feature.spectral_centroid(y=y, sr=SR))\n",
-    "        \n",
-    "        test_features.append(list(mfcc) + [centroid])\n",
-    "        \n",
-    "    except Exception as e:\n",
-    "        print(f\"Error processing {file_path}: {e}\")\n",
-    "        test_features.append([0]*14)\n",
+    "for epoch in range(EPOCHS):\n",
+    "    train_loss = train_one_epoch(model, train_loader, criterion, optimizer)\n",
+    "    val_f1 = evaluate(model, val_loader)\n",
     "\n",
-    "    if (index + 1) % 100 == 0:\n",
-    "        print(f\"Processed {index + 1}/{len(test_df)} files...\")"
+    "    print(f\"Epoch {epoch+1}/{EPOCHS} | \"\n",
+    "          f\"Loss: {train_loss:.4f} | \"\n",
+    "          f\"Val Macro F1: {val_f1:.4f}\")"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 8,
-   "id": "31d4d310",
+   "execution_count": 11,
+   "id": "d2099f88",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-19T07:39:32.317651Z",
-     "iopub.status.busy": "2026-02-19T07:39:32.317222Z",
-     "iopub.status.idle": "2026-02-19T07:39:32.406300Z",
-     "shell.execute_reply": "2026-02-19T07:39:32.405202Z"
+     "iopub.execute_input": "2026-02-27T12:53:12.435935Z",
+     "iopub.status.busy": "2026-02-27T12:53:12.435537Z",
+     "iopub.status.idle": "2026-02-27T12:56:55.418845Z",
+     "shell.execute_reply": "2026-02-27T12:56:55.416241Z"
     },
     "papermill": {
-     "duration": 0.101808,
-     "end_time": "2026-02-19T07:39:32.408532",
+     "duration": 222.990596,
+     "end_time": "2026-02-27T12:56:55.422240",
      "exception": false,
-     "start_time": "2026-02-19T07:39:32.306724",
+     "start_time": "2026-02-27T12:53:12.431644",
      "status": "completed"
     },
     "tags": []
@@ -414,41 +565,54 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "\n",
-      "Success!\n",
-      "   id   genre\n",
-      "0   1     pop\n",
-      "1   2  reggae\n",
-      "2   3   disco\n",
-      "3   4    jazz\n",
-      "4   5  reggae\n"
+      "Success!\n"
      ]
     }
    ],
    "source": [
     "# Prediction and Submmission\n",
     "\n",
-    "X_test_final = pd.DataFrame(test_features, columns=[f'mfcc_{i}' for i in range(13)] + ['centroid'])\n",
-    "test_preds = clf.predict(X_test_final)\n",
+    "model.eval()\n",
+    "test_df = pd.read_csv('/kaggle/input/jan-2026-dl-gen-ai-project/messy_mashup/test.csv') \n",
+    "results = []\n",
     "\n",
+    "with torch.no_grad():\n",
+    "    for filename in test_df[\"filename\"]:\n",
+    "        path = os.path.join(DATA_ROOT, filename)\n",
+    "        y, _ = librosa.load(path, sr=SR, duration=DURATION)\n",
     "\n",
-    "predicted_genres = le.inverse_transform(test_preds.flatten())\n",
+    "        mel = librosa.feature.melspectrogram(\n",
+    "            y=y,\n",
+    "            sr=SR,\n",
+    "            n_fft=N_FFT,\n",
+    "            hop_length=HOP_LENGTH,\n",
+    "            n_mels=N_MELS\n",
+    "        )\n",
     "\n",
-    "submission_df = pd.DataFrame({\n",
-    "    'id': test_df['id'], \n",
-    "    'genre': predicted_genres\n",
+    "        mel_db = librosa.power_to_db(mel, ref=np.max)\n",
+    "        mel_db = (mel_db + 40.0) / 40.0\n",
+    "\n",
+    "        tensor = torch.tensor(mel_db, dtype=torch.float32).unsqueeze(0).unsqueeze(0)\n",
+    "        tensor = tensor.to(DEVICE)\n",
+    "\n",
+    "        output = model(tensor)\n",
+    "        pred_idx = torch.argmax(output, dim=1).item()\n",
+    "\n",
+    "        results.append(GENRES[pred_idx])\n",
+    "\n",
+    "submission = pd.DataFrame({\n",
+    "    \"id\": test_df[\"id\"],\n",
+    "    \"genre\": results\n",
     "})\n",
     "\n",
-    "submission_df.to_csv('submission.csv', index=False)\n",
-    "\n",
-    "print(\"\\nSuccess!\")\n",
-    "print(submission_df.head())"
+    "submission.to_csv(\"submission.csv\", index=False)\n",
+    "print(\"Success!\")"
    ]
   }
  ],
  "metadata": {
   "kaggle": {
-   "accelerator": "none",
+   "accelerator": "nvidiaTeslaT4",
    "dataSources": [
     {
      "databundleVersionId": 15477148,
@@ -457,7 +621,7 @@
     }
    ],
    "dockerImageVersionId": 31259,
-   "isGpuEnabled": false,
+   "isGpuEnabled": true,
    "isInternetEnabled": true,
    "language": "python",
    "sourceType": "notebook"
@@ -481,14 +645,14 @@
   },
   "papermill": {
    "default_parameters": {},
-   "duration": 628.102334,
-   "end_time": "2026-02-19T07:39:34.144888",
+   "duration": 4035.459812,
+   "end_time": "2026-02-27T12:56:58.518950",
    "environment_variables": {},
    "exception": null,
    "input_path": "__notebook__.ipynb",
    "output_path": "__notebook__.ipynb",
    "parameters": {},
-   "start_time": "2026-02-19T07:29:06.042554",
+   "start_time": "2026-02-27T11:49:43.059138",
    "version": "2.6.0"
   }
  },
