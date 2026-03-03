@@ -3,21 +3,21 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "5c8684a8",
+   "id": "e6d59019",
    "metadata": {
     "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
     "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
     "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:30.475510Z",
-     "iopub.status.busy": "2026-02-28T11:18:30.474634Z",
-     "iopub.status.idle": "2026-02-28T11:18:39.665910Z",
-     "shell.execute_reply": "2026-02-28T11:18:39.664779Z"
+     "iopub.execute_input": "2026-03-03T19:10:51.006370Z",
+     "iopub.status.busy": "2026-03-03T19:10:51.005752Z",
+     "iopub.status.idle": "2026-03-03T19:10:57.448597Z",
+     "shell.execute_reply": "2026-03-03T19:10:57.447947Z"
     },
     "papermill": {
-     "duration": 9.198061,
-     "end_time": "2026-02-28T11:18:39.668088",
+     "duration": 6.448102,
+     "end_time": "2026-03-03T19:10:57.450292",
      "exception": false,
-     "start_time": "2026-02-28T11:18:30.470027",
+     "start_time": "2026-03-03T19:10:51.002190",
      "status": "completed"
     },
     "tags": []
@@ -35,27 +35,25 @@
     "import torch.nn as nn\n",
     "import torch.optim as optim\n",
     "from torch.utils.data import Dataset, DataLoader\n",
-    "from sklearn.metrics import f1_score\n",
-    "from sklearn.utils.class_weight import compute_class_weight\n",
-    "from sklearn.model_selection import StratifiedKFold"
+    "from sklearn.metrics import f1_score"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "b2a26e14",
+   "id": "0ee9b863",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:39.675417Z",
-     "iopub.status.busy": "2026-02-28T11:18:39.674312Z",
-     "iopub.status.idle": "2026-02-28T11:18:39.682980Z",
-     "shell.execute_reply": "2026-02-28T11:18:39.681977Z"
+     "iopub.execute_input": "2026-03-03T19:10:57.455077Z",
+     "iopub.status.busy": "2026-03-03T19:10:57.454761Z",
+     "iopub.status.idle": "2026-03-03T19:10:57.712361Z",
+     "shell.execute_reply": "2026-03-03T19:10:57.711552Z"
     },
     "papermill": {
-     "duration": 0.014363,
-     "end_time": "2026-02-28T11:18:39.684943",
+     "duration": 0.261647,
+     "end_time": "2026-03-03T19:10:57.713900",
      "exception": false,
-     "start_time": "2026-02-28T11:18:39.670580",
+     "start_time": "2026-03-03T19:10:57.452253",
      "status": "completed"
     },
     "tags": []
@@ -65,7 +63,7 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "cpu\n"
+      "Executing on: cuda\n"
      ]
     }
    ],
@@ -78,15 +76,15 @@
     "# Audio\n",
     "SR = 22050\n",
     "DURATION = 5.0\n",
-    "TOP_DB = 20\n",
+    "TOP_DB = 25\n",
     "N_MELS = 128\n",
     "N_FFT = 2048\n",
     "HOP_LENGTH = 512\n",
     "\n",
     "# Training\n",
     "BATCH_SIZE = 32\n",
-    "EPOCHS = 20\n",
-    "LEARNING_RATE = 0.001\n",
+    "EPOCHS = 30\n",
+    "LEARNING_RATE = 1e-3\n",
     "\n",
     "DATA_ROOT = '/kaggle/input/jan-2026-dl-gen-ai-project/messy_mashup'\n",
     "GENRES = ['blues', 'classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock']\n",
@@ -95,27 +93,29 @@
     "\n",
     "random.seed(DATA_SEED)\n",
     "np.random.seed(DATA_SEED)\n",
+    "torch.manual_seed(TRAINING_SEED)\n",
+    "torch.cuda.manual_seed(TRAINING_SEED)\n",
     "\n",
-    "DEVICE = torch.device(\"cpu\")  \n",
-    "print(DEVICE)"
+    "DEVICE = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\n",
+    "print(f\"Executing on: {DEVICE}\")"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "414ac587",
+   "id": "91942b88",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:39.691468Z",
-     "iopub.status.busy": "2026-02-28T11:18:39.691163Z",
-     "iopub.status.idle": "2026-02-28T11:18:45.854240Z",
-     "shell.execute_reply": "2026-02-28T11:18:45.853263Z"
+     "iopub.execute_input": "2026-03-03T19:10:57.719040Z",
+     "iopub.status.busy": "2026-03-03T19:10:57.718490Z",
+     "iopub.status.idle": "2026-03-03T19:11:02.810170Z",
+     "shell.execute_reply": "2026-03-03T19:11:02.809611Z"
     },
     "papermill": {
-     "duration": 6.168891,
-     "end_time": "2026-02-28T11:18:45.856308",
+     "duration": 5.095999,
+     "end_time": "2026-03-03T19:11:02.811820",
      "exception": false,
-     "start_time": "2026-02-28T11:18:39.687417",
+     "start_time": "2026-03-03T19:10:57.715821",
      "status": "completed"
     },
     "tags": []
@@ -169,19 +169,19 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "a2d52f39",
+   "id": "cd6d98b2",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:45.863137Z",
-     "iopub.status.busy": "2026-02-28T11:18:45.862606Z",
-     "iopub.status.idle": "2026-02-28T11:18:45.870437Z",
-     "shell.execute_reply": "2026-02-28T11:18:45.869735Z"
+     "iopub.execute_input": "2026-03-03T19:11:02.816854Z",
+     "iopub.status.busy": "2026-03-03T19:11:02.816636Z",
+     "iopub.status.idle": "2026-03-03T19:11:02.822837Z",
+     "shell.execute_reply": "2026-03-03T19:11:02.822303Z"
     },
     "papermill": {
-     "duration": 0.013651,
-     "end_time": "2026-02-28T11:18:45.872342",
+     "duration": 0.010233,
+     "end_time": "2026-03-03T19:11:02.824107",
      "exception": false,
-     "start_time": "2026-02-28T11:18:45.858691",
+     "start_time": "2026-03-03T19:11:02.813874",
      "status": "completed"
     },
     "tags": []
@@ -217,19 +217,115 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "8208e048",
+   "id": "bc472383",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:45.878910Z",
-     "iopub.status.busy": "2026-02-28T11:18:45.878411Z",
-     "iopub.status.idle": "2026-02-28T11:18:45.887454Z",
-     "shell.execute_reply": "2026-02-28T11:18:45.886742Z"
+     "iopub.execute_input": "2026-03-03T19:11:02.828419Z",
+     "iopub.status.busy": "2026-03-03T19:11:02.828194Z",
+     "iopub.status.idle": "2026-03-03T19:11:02.833449Z",
+     "shell.execute_reply": "2026-03-03T19:11:02.832800Z"
     },
     "papermill": {
-     "duration": 0.014552,
-     "end_time": "2026-02-28T11:18:45.889382",
+     "duration": 0.009018,
+     "end_time": "2026-03-03T19:11:02.834868",
      "exception": false,
-     "start_time": "2026-02-28T11:18:45.874830",
+     "start_time": "2026-03-03T19:11:02.825850",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "class ResBlock(nn.Module):\n",
+    "    def __init__(self, in_channels, out_channels):\n",
+    "        super().__init__()\n",
+    "        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)\n",
+    "        self.bn1 = nn.BatchNorm2d(out_channels)\n",
+    "        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)\n",
+    "        self.bn2 = nn.BatchNorm2d(out_channels)\n",
+    "        \n",
+    "        self.shortcut = nn.Sequential()\n",
+    "        if in_channels != out_channels:\n",
+    "            self.shortcut = nn.Sequential(\n",
+    "                nn.Conv2d(in_channels, out_channels, kernel_size=1),\n",
+    "                nn.BatchNorm2d(out_channels)\n",
+    "            )\n",
+    "\n",
+    "    def forward(self, x):\n",
+    "        residual = self.shortcut(x)\n",
+    "        out = torch.relu(self.bn1(self.conv1(x)))\n",
+    "        out = self.bn2(self.conv2(out))\n",
+    "        out += residual\n",
+    "        return torch.relu(out)\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "2fc4dcc2",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-03-03T19:11:02.839407Z",
+     "iopub.status.busy": "2026-03-03T19:11:02.838851Z",
+     "iopub.status.idle": "2026-03-03T19:11:02.843905Z",
+     "shell.execute_reply": "2026-03-03T19:11:02.843360Z"
+    },
+    "papermill": {
+     "duration": 0.008737,
+     "end_time": "2026-03-03T19:11:02.845288",
+     "exception": false,
+     "start_time": "2026-03-03T19:11:02.836551",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Model\n",
+    "\n",
+    "class MusicResNet(nn.Module):\n",
+    "    def __init__(self, num_classes=10):\n",
+    "        super().__init__()\n",
+    "        self.stage1 = ResBlock(1, 32)\n",
+    "        self.stage2 = ResBlock(32, 64)\n",
+    "        self.stage3 = ResBlock(64, 128)\n",
+    "        self.stage4 = ResBlock(128, 256)\n",
+    "        self.pool = nn.MaxPool2d(2)\n",
+    "        \n",
+    "        self.classifier = nn.Sequential(\n",
+    "            nn.AdaptiveAvgPool2d(1),\n",
+    "            nn.Flatten(),\n",
+    "            nn.Dropout(0.4),\n",
+    "            nn.Linear(256, 128),\n",
+    "            nn.ReLU(),\n",
+    "            nn.Linear(128, num_classes)\n",
+    "        )\n",
+    "\n",
+    "    def forward(self, x):\n",
+    "        x = self.pool(self.stage1(x))\n",
+    "        x = self.pool(self.stage2(x))\n",
+    "        x = self.pool(self.stage3(x))\n",
+    "        x = self.pool(self.stage4(x))\n",
+    "        return self.classifier(x)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "8ca10d2b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-03-03T19:11:02.849710Z",
+     "iopub.status.busy": "2026-03-03T19:11:02.849505Z",
+     "iopub.status.idle": "2026-03-03T19:11:02.856446Z",
+     "shell.execute_reply": "2026-03-03T19:11:02.855769Z"
+    },
+    "papermill": {
+     "duration": 0.010727,
+     "end_time": "2026-03-03T19:11:02.857789",
+     "exception": false,
+     "start_time": "2026-03-03T19:11:02.847062",
      "status": "completed"
     },
     "tags": []
@@ -238,196 +334,53 @@
    "source": [
     "# Dataset \n",
     "\n",
-    "class MashupDataset(Dataset):\n",
-    "    def __init__(self, dataset_dict, genres, stem_keys, samples_per_genre=250):\n",
-    "        self.dataset_dict = dataset_dict\n",
-    "        self.genres = genres\n",
-    "        self.stem_keys = stem_keys\n",
-    "        self.samples = []\n",
-    "        for idx, genre in enumerate(genres):\n",
-    "            for _ in range(samples_per_genre):\n",
-    "                self.samples.append((idx, genre))\n",
+    "class AudioDataset(Dataset):\n",
+    "    def __init__(self, data_dict, samples_per_genre=100, augment=True):\n",
+    "        self.data_dict = data_dict\n",
+    "        self.samples_per_genre = samples_per_genre\n",
+    "        self.augment = augment\n",
+    "        self.samples = [(idx, g) for idx, g in enumerate(GENRES) for _ in range(samples_per_genre)]\n",
     "\n",
-    "    def __len__(self):\n",
-    "        return len(self.samples)\n",
+    "    def __len__(self): return len(self.samples)\n",
     "\n",
     "    def __getitem__(self, idx):\n",
     "        genre_idx, genre_name = self.samples[idx]\n",
     "        mix = np.zeros(int(SR * DURATION))\n",
-    "\n",
-    "        for key in self.stem_keys:\n",
-    "            path = random.choice(self.dataset_dict[genre_name][key])\n",
-    "            # Fast load\n",
+    "        \n",
+    "        for k in STEM_KEYS:\n",
+    "            path = random.choice(self.data_dict[genre_name][k])\n",
     "            y, _ = librosa.load(path, sr=SR, duration=DURATION)\n",
-    "            if len(y) < len(mix):\n",
-    "                y = np.pad(y, (0, len(mix) - len(y)))\n",
-    "            else:\n",
-    "                y = y[:len(mix)]\n",
-    "            \n",
-    "            mix += y * random.uniform(0.7, 1.3)\n",
+    "            if len(y) < len(mix): y = np.pad(y, (0, len(mix) - len(y)))\n",
+    "            mix += y * random.uniform(0.6, 1.3) if self.augment else y\n",
     "\n",
-    "        mel = librosa.feature.melspectrogram(y=mix, sr=SR, n_fft=N_FFT, hop_length=HOP_LENGTH, n_mels=N_MELS)\n",
+    "        mel = librosa.feature.melspectrogram(y=mix, sr=SR, n_mels=N_MELS, n_fft=N_FFT, hop_length=HOP_LENGTH)\n",
     "        mel_db = librosa.power_to_db(mel, ref=np.max)\n",
     "        \n",
-    "        mel_db = (mel_db - mel_db.mean()) / (mel_db.std() + 1e-6)\n",
-    "\n",
-    "        return torch.tensor(mel_db, dtype=torch.float32).unsqueeze(0), genre_idx"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 6,
-   "id": "88e12ee4",
-   "metadata": {
-    "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:45.895863Z",
-     "iopub.status.busy": "2026-02-28T11:18:45.895376Z",
-     "iopub.status.idle": "2026-02-28T11:18:45.903011Z",
-     "shell.execute_reply": "2026-02-28T11:18:45.902182Z"
-    },
-    "papermill": {
-     "duration": 0.012851,
-     "end_time": "2026-02-28T11:18:45.904691",
-     "exception": false,
-     "start_time": "2026-02-28T11:18:45.891840",
-     "status": "completed"
-    },
-    "tags": []
-   },
-   "outputs": [],
-   "source": [
-    "# CNN \n",
-    "\n",
-    "class GenreCNN(nn.Module):\n",
-    "    def __init__(self, num_classes=10):\n",
-    "        super().__init__()\n",
-    "        self.features = nn.Sequential(\n",
-    "            # Block 1\n",
-    "            nn.Conv2d(1, 32, kernel_size=3, padding=1),\n",
-    "            nn.BatchNorm2d(32),\n",
-    "            nn.ReLU(),\n",
-    "            nn.MaxPool2d(2),\n",
+    "        mel_db = (mel_db - (-40.0)) / 40.0 \n",
+    "        tensor = torch.tensor(mel_db, dtype=torch.float32).unsqueeze(0)\n",
+    "        \n",
+    "        if self.augment and random.random() < 0.3: \n",
+    "            tensor[:, random.randint(0, 100):random.randint(100, 128), :] = 0\n",
     "            \n",
-    "            # Block 2\n",
-    "            nn.Conv2d(32, 64, kernel_size=3, padding=1),\n",
-    "            nn.BatchNorm2d(64),\n",
-    "            nn.ReLU(),\n",
-    "            nn.MaxPool2d(2),\n",
-    "            \n",
-    "            # Block 3\n",
-    "            nn.Conv2d(64, 128, kernel_size=3, padding=1),\n",
-    "            nn.BatchNorm2d(128),\n",
-    "            nn.ReLU(),\n",
-    "            nn.MaxPool2d(2),\n",
-    "            \n",
-    "            # Block 4\n",
-    "            nn.Conv2d(128, 128, kernel_size=3, padding=1),\n",
-    "            nn.BatchNorm2d(128),\n",
-    "            nn.ReLU(),\n",
-    "            nn.AdaptiveAvgPool2d((4, 4)) # Reduces spatial dims to fixed size\n",
-    "        )\n",
-    "\n",
-    "        self.classifier = nn.Sequential(\n",
-    "            nn.Flatten(),\n",
-    "            nn.Linear(128 * 4 * 4, 256),\n",
-    "            nn.ReLU(),\n",
-    "            nn.Dropout(0.4), # Increased dropout for better generalization\n",
-    "            nn.Linear(256, num_classes)\n",
-    "        )\n",
-    "\n",
-    "    def forward(self, x):\n",
-    "        x = self.features(x)\n",
-    "        return self.classifier(x)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 7,
-   "id": "580b3427",
-   "metadata": {
-    "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:45.911225Z",
-     "iopub.status.busy": "2026-02-28T11:18:45.910670Z",
-     "iopub.status.idle": "2026-02-28T11:18:45.916306Z",
-     "shell.execute_reply": "2026-02-28T11:18:45.915196Z"
-    },
-    "papermill": {
-     "duration": 0.010997,
-     "end_time": "2026-02-28T11:18:45.918121",
-     "exception": false,
-     "start_time": "2026-02-28T11:18:45.907124",
-     "status": "completed"
-    },
-    "tags": []
-   },
-   "outputs": [],
-   "source": [
-    "# Training Function\n",
-    "\n",
-    "def train_one_epoch(model, loader, criterion, optimizer):\n",
-    "    model.train()\n",
-    "    total_loss = 0\n",
-    "    for inputs, labels in loader:\n",
-    "        inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)\n",
-    "        optimizer.zero_grad()\n",
-    "        loss = criterion(model(inputs), labels)\n",
-    "        loss.backward()\n",
-    "        optimizer.step()\n",
-    "        total_loss += loss.item()\n",
-    "    return total_loss / len(loader)"
+    "        return tensor, genre_idx"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "74850b21",
+   "id": "7c42d5ba",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:45.924587Z",
-     "iopub.status.busy": "2026-02-28T11:18:45.924033Z",
-     "iopub.status.idle": "2026-02-28T11:18:45.930418Z",
-     "shell.execute_reply": "2026-02-28T11:18:45.929200Z"
+     "iopub.execute_input": "2026-03-03T19:11:02.861928Z",
+     "iopub.status.busy": "2026-03-03T19:11:02.861699Z",
+     "iopub.status.idle": "2026-03-03T22:13:28.520978Z",
+     "shell.execute_reply": "2026-03-03T22:13:28.520302Z"
     },
     "papermill": {
-     "duration": 0.011904,
-     "end_time": "2026-02-28T11:18:45.932364",
+     "duration": 10945.671563,
+     "end_time": "2026-03-03T22:13:28.530959",
      "exception": false,
-     "start_time": "2026-02-28T11:18:45.920460",
-     "status": "completed"
-    },
-    "tags": []
-   },
-   "outputs": [],
-   "source": [
-    "# Evalutation Function\n",
-    "\n",
-    "def evaluate(model, loader):\n",
-    "    model.eval()\n",
-    "    preds, labels_list = [], []\n",
-    "    with torch.no_grad():\n",
-    "        for inputs, labels in loader:\n",
-    "            output = model(inputs.to(DEVICE))\n",
-    "            preds.extend(torch.argmax(output, dim=1).cpu().numpy())\n",
-    "            labels_list.extend(labels.numpy())\n",
-    "    return f1_score(labels_list, preds, average='macro')\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 9,
-   "id": "30eea540",
-   "metadata": {
-    "execution": {
-     "iopub.execute_input": "2026-02-28T11:18:45.939103Z",
-     "iopub.status.busy": "2026-02-28T11:18:45.938435Z",
-     "iopub.status.idle": "2026-02-28T14:23:14.790235Z",
-     "shell.execute_reply": "2026-02-28T14:23:14.789130Z"
-    },
-    "papermill": {
-     "duration": 11068.860661,
-     "end_time": "2026-02-28T14:23:14.795429",
-     "exception": false,
-     "start_time": "2026-02-28T11:18:45.934768",
+     "start_time": "2026-03-03T19:11:02.859396",
      "status": "completed"
     },
     "tags": []
@@ -437,67 +390,91 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Epoch 1/20 | Loss: 1.4880 | Val F1: 0.4707 | LR: 0.001000\n",
-      "Epoch 2/20 | Loss: 1.0695 | Val F1: 0.5372 | LR: 0.001000\n",
-      "Epoch 3/20 | Loss: 0.8436 | Val F1: 0.6822 | LR: 0.001000\n",
-      "Epoch 4/20 | Loss: 0.7720 | Val F1: 0.5772 | LR: 0.001000\n",
-      "Epoch 5/20 | Loss: 0.6374 | Val F1: 0.6133 | LR: 0.001000\n",
-      "Epoch 6/20 | Loss: 0.5504 | Val F1: 0.5534 | LR: 0.001000\n",
-      "Epoch 7/20 | Loss: 0.5062 | Val F1: 0.7494 | LR: 0.001000\n",
-      "Epoch 8/20 | Loss: 0.4678 | Val F1: 0.6904 | LR: 0.001000\n",
-      "Epoch 9/20 | Loss: 0.4107 | Val F1: 0.7218 | LR: 0.001000\n",
-      "Epoch 10/20 | Loss: 0.3815 | Val F1: 0.6636 | LR: 0.001000\n",
-      "Epoch 11/20 | Loss: 0.3503 | Val F1: 0.7066 | LR: 0.000500\n",
-      "Epoch 12/20 | Loss: 0.2739 | Val F1: 0.7801 | LR: 0.000500\n",
-      "Epoch 13/20 | Loss: 0.2162 | Val F1: 0.8259 | LR: 0.000500\n",
-      "Epoch 14/20 | Loss: 0.1982 | Val F1: 0.7831 | LR: 0.000500\n",
-      "Epoch 15/20 | Loss: 0.1952 | Val F1: 0.7312 | LR: 0.000500\n",
-      "Epoch 16/20 | Loss: 0.1879 | Val F1: 0.7365 | LR: 0.000500\n",
-      "Epoch 17/20 | Loss: 0.1847 | Val F1: 0.7616 | LR: 0.000250\n",
-      "Epoch 18/20 | Loss: 0.1393 | Val F1: 0.7892 | LR: 0.000250\n",
-      "Epoch 19/20 | Loss: 0.1407 | Val F1: 0.7883 | LR: 0.000250\n",
-      "Epoch 20/20 | Loss: 0.1223 | Val F1: 0.8013 | LR: 0.000250\n"
+      "Epoch 01 | Loss: 1.5243 | Macro F1: 0.5216\n",
+      "Epoch 02 | Loss: 1.1495 | Macro F1: 0.4094\n",
+      "Epoch 03 | Loss: 0.9493 | Macro F1: 0.4450\n",
+      "Epoch 04 | Loss: 0.8335 | Macro F1: 0.5503\n",
+      "Epoch 05 | Loss: 0.7323 | Macro F1: 0.6035\n",
+      "Epoch 06 | Loss: 0.6635 | Macro F1: 0.6725\n",
+      "Epoch 07 | Loss: 0.6026 | Macro F1: 0.5996\n",
+      "Epoch 08 | Loss: 0.5270 | Macro F1: 0.7272\n",
+      "Epoch 09 | Loss: 0.4973 | Macro F1: 0.6857\n",
+      "Epoch 10 | Loss: 0.4505 | Macro F1: 0.7466\n",
+      "Epoch 11 | Loss: 0.4266 | Macro F1: 0.7123\n",
+      "Epoch 12 | Loss: 0.3860 | Macro F1: 0.6931\n",
+      "Epoch 13 | Loss: 0.3902 | Macro F1: 0.7209\n",
+      "Epoch 14 | Loss: 0.3406 | Macro F1: 0.7084\n",
+      "Epoch 15 | Loss: 0.2768 | Macro F1: 0.7913\n",
+      "Epoch 16 | Loss: 0.2461 | Macro F1: 0.8411\n",
+      "Epoch 17 | Loss: 0.2374 | Macro F1: 0.8434\n",
+      "Epoch 18 | Loss: 0.2276 | Macro F1: 0.8385\n",
+      "Epoch 19 | Loss: 0.2114 | Macro F1: 0.8420\n",
+      "Epoch 20 | Loss: 0.2147 | Macro F1: 0.8297\n",
+      "Epoch 21 | Loss: 0.2120 | Macro F1: 0.7960\n",
+      "Epoch 22 | Loss: 0.1669 | Macro F1: 0.8578\n",
+      "Epoch 23 | Loss: 0.1545 | Macro F1: 0.8610\n",
+      "Epoch 24 | Loss: 0.1441 | Macro F1: 0.8115\n",
+      "Epoch 25 | Loss: 0.1450 | Macro F1: 0.8741\n",
+      "Epoch 26 | Loss: 0.1537 | Macro F1: 0.8629\n",
+      "Epoch 27 | Loss: 0.1533 | Macro F1: 0.8506\n",
+      "Epoch 28 | Loss: 0.1533 | Macro F1: 0.8244\n",
+      "Epoch 29 | Loss: 0.1360 | Macro F1: 0.8770\n",
+      "Epoch 30 | Loss: 0.1313 | Macro F1: 0.8569\n"
      ]
     }
    ],
    "source": [
-    "# DataLoaders\n",
+    "# Training Function\n",
     "\n",
-    "train_loader = DataLoader(MashupDataset(train_dict, GENRES, STEM_KEYS, 400), batch_size=BATCH_SIZE, shuffle=True)\n",
-    "val_loader = DataLoader(MashupDataset(val_dict, GENRES, STEM_KEYS, 100), batch_size=BATCH_SIZE)\n",
+    "train_dict, val_dict = build_dataset(DATA_ROOT)\n",
+    "train_loader = DataLoader(AudioDataset(train_dict, samples_per_genre=500), batch_size=BATCH_SIZE, shuffle=True)\n",
+    "val_loader = DataLoader(AudioDataset(val_dict, samples_per_genre=100, augment=False), batch_size=BATCH_SIZE)\n",
     "\n",
-    "# Model, Loss, Optimizer\n",
-    "\n",
-    "model = GenreCNN().to(DEVICE)\n",
+    "model = MusicResNet().to(DEVICE)\n",
+    "optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=0.01)\n",
     "criterion = nn.CrossEntropyLoss()\n",
-    "optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-4)\n",
     "scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=3)\n",
     "\n",
-    "# Training Loop\n",
-    "\n",
     "for epoch in range(EPOCHS):\n",
-    "    train_loss = train_one_epoch(model, train_loader, criterion, optimizer)\n",
-    "    val_f1 = evaluate(model, val_loader)\n",
-    "    scheduler.step(val_f1)\n",
-    "    print(f\"Epoch {epoch+1}/{EPOCHS} | Loss: {train_loss:.4f} | Val F1: {val_f1:.4f} | LR: {optimizer.param_groups[0]['lr']:.6f}\")"
+    "    model.train()\n",
+    "    train_loss = 0\n",
+    "    for x, y in train_loader:\n",
+    "        x, y = x.to(DEVICE), y.to(DEVICE)\n",
+    "        optimizer.zero_grad()\n",
+    "        loss = criterion(model(x), y)\n",
+    "        loss.backward()\n",
+    "        optimizer.step()\n",
+    "        train_loss += loss.item()\n",
+    "    \n",
+    "    model.eval()\n",
+    "    preds, targets = [], []\n",
+    "    with torch.no_grad():\n",
+    "        for x, y in val_loader:\n",
+    "            out = model(x.to(DEVICE))\n",
+    "            preds.extend(torch.argmax(out, dim=1).cpu().numpy())\n",
+    "            targets.extend(y.numpy())\n",
+    "    \n",
+    "    f1 = f1_score(targets, preds, average='macro')\n",
+    "    scheduler.step(f1)\n",
+    "    print(f\"Epoch {epoch+1:02d} | Loss: {train_loss/len(train_loader):.4f} | Macro F1: {f1:.4f}\")"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 10,
-   "id": "978c0899",
+   "execution_count": 9,
+   "id": "1ef9318c",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-28T14:23:14.804660Z",
-     "iopub.status.busy": "2026-02-28T14:23:14.804180Z",
-     "iopub.status.idle": "2026-02-28T14:27:46.839602Z",
-     "shell.execute_reply": "2026-02-28T14:27:46.838791Z"
+     "iopub.execute_input": "2026-03-03T22:13:28.542527Z",
+     "iopub.status.busy": "2026-03-03T22:13:28.542040Z",
+     "iopub.status.idle": "2026-03-03T22:14:32.605815Z",
+     "shell.execute_reply": "2026-03-03T22:14:32.605198Z"
     },
     "papermill": {
-     "duration": 272.047342,
-     "end_time": "2026-02-28T14:27:46.846666",
+     "duration": 64.074557,
+     "end_time": "2026-03-03T22:14:32.610475",
      "exception": false,
-     "start_time": "2026-02-28T14:23:14.799324",
+     "start_time": "2026-03-03T22:13:28.535918",
      "status": "completed"
     },
     "tags": []
@@ -514,47 +491,33 @@
    "source": [
     "# Prediction and Submmission\n",
     "\n",
+    "test_df = pd.read_csv('/kaggle/input/jan-2026-dl-gen-ai-project/messy_mashup/test.csv')\n",
     "model.eval()\n",
-    "test_df = pd.read_csv('/kaggle/input/jan-2026-dl-gen-ai-project/messy_mashup/test.csv') \n",
-    "results = []\n",
+    "test_preds = []\n",
     "\n",
     "with torch.no_grad():\n",
-    "    for filename in test_df[\"filename\"]:\n",
-    "        path = os.path.join(DATA_ROOT, filename)\n",
+    "    for fname in test_df[\"filename\"]:\n",
+    "        path = os.path.join(DATA_ROOT, fname)\n",
     "        y, _ = librosa.load(path, sr=SR, duration=DURATION)\n",
-    "\n",
-    "        mel = librosa.feature.melspectrogram(\n",
-    "            y=y,\n",
-    "            sr=SR,\n",
-    "            n_fft=N_FFT,\n",
-    "            hop_length=HOP_LENGTH,\n",
-    "            n_mels=N_MELS\n",
-    "        )\n",
-    "\n",
-    "        mel_db = librosa.power_to_db(mel, ref=np.max)\n",
-    "        mel_db = (mel_db + 40.0) / 40.0\n",
-    "\n",
-    "        tensor = torch.tensor(mel_db, dtype=torch.float32).unsqueeze(0).unsqueeze(0)\n",
-    "        tensor = tensor.to(DEVICE)\n",
-    "\n",
-    "        output = model(tensor)\n",
-    "        pred_idx = torch.argmax(output, dim=1).item()\n",
-    "\n",
-    "        results.append(GENRES[pred_idx])\n",
+    "        mel = librosa.feature.melspectrogram(y=y, sr=SR, n_mels=N_MELS, n_fft=N_FFT, hop_length=HOP_LENGTH)\n",
+    "        mel_db = (librosa.power_to_db(mel, ref=np.max) - (-40.0)) / 40.0\n",
+    "        x = torch.tensor(mel_db, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to(DEVICE)\n",
+    "        test_preds.append(GENRES[torch.argmax(model(x), dim=1).item()])\n",
     "\n",
     "submission = pd.DataFrame({\n",
-    "    \"id\": test_df[\"id\"],\n",
-    "    \"genre\": results\n",
+    "    \"id\": test_df[\"id\"], \n",
+    "    \"genre\": test_preds\n",
     "})\n",
     "\n",
     "submission.to_csv(\"submission.csv\", index=False)\n",
+    "\n",
     "print(\"Success!\")"
    ]
   }
  ],
  "metadata": {
   "kaggle": {
-   "accelerator": "none",
+   "accelerator": "nvidiaTeslaT4",
    "dataSources": [
     {
      "databundleVersionId": 15477148,
@@ -563,7 +526,7 @@
     }
    ],
    "dockerImageVersionId": 31259,
-   "isGpuEnabled": false,
+   "isGpuEnabled": true,
    "isInternetEnabled": true,
    "language": "python",
    "sourceType": "notebook"
@@ -587,14 +550,14 @@
   },
   "papermill": {
    "default_parameters": {},
-   "duration": 11363.622207,
-   "end_time": "2026-02-28T14:27:50.385362",
+   "duration": 11027.480356,
+   "end_time": "2026-03-03T22:14:35.789862",
    "environment_variables": {},
    "exception": null,
    "input_path": "__notebook__.ipynb",
    "output_path": "__notebook__.ipynb",
    "parameters": {},
-   "start_time": "2026-02-28T11:18:26.763155",
+   "start_time": "2026-03-03T19:10:48.309506",
    "version": "2.6.0"
   }
  },
