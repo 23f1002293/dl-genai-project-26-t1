@@ -3,25 +3,25 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "e8210b01",
+   "id": "fd8151c9",
    "metadata": {
     "_cell_guid": "29e03169-88d3-4f63-a7da-f34ae0eb3db0",
     "_uuid": "22e946c8-8912-4165-86f7-6fca72dacd53",
     "collapsed": false,
     "execution": {
-     "iopub.execute_input": "2026-03-09T02:31:37.333317Z",
-     "iopub.status.busy": "2026-03-09T02:31:37.332786Z",
-     "iopub.status.idle": "2026-03-09T02:31:43.981592Z",
-     "shell.execute_reply": "2026-03-09T02:31:43.980839Z"
+     "iopub.execute_input": "2026-03-09T02:40:32.619864Z",
+     "iopub.status.busy": "2026-03-09T02:40:32.619635Z",
+     "iopub.status.idle": "2026-03-09T02:40:38.660820Z",
+     "shell.execute_reply": "2026-03-09T02:40:38.660209Z"
     },
     "jupyter": {
      "outputs_hidden": false
     },
     "papermill": {
-     "duration": 6.654926,
-     "end_time": "2026-03-09T02:31:43.983398",
+     "duration": 6.047254,
+     "end_time": "2026-03-09T02:40:38.662578",
      "exception": false,
-     "start_time": "2026-03-09T02:31:37.328472",
+     "start_time": "2026-03-09T02:40:32.615324",
      "status": "completed"
     },
     "tags": []
@@ -50,19 +50,19 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "f2182746",
+   "id": "ae8ff314",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-03-09T02:31:43.989009Z",
-     "iopub.status.busy": "2026-03-09T02:31:43.988294Z",
-     "iopub.status.idle": "2026-03-09T02:31:44.248906Z",
-     "shell.execute_reply": "2026-03-09T02:31:44.247890Z"
+     "iopub.execute_input": "2026-03-09T02:40:38.667003Z",
+     "iopub.status.busy": "2026-03-09T02:40:38.666666Z",
+     "iopub.status.idle": "2026-03-09T02:40:38.921090Z",
+     "shell.execute_reply": "2026-03-09T02:40:38.920331Z"
     },
     "papermill": {
-     "duration": 0.264972,
-     "end_time": "2026-03-09T02:31:44.250516",
+     "duration": 0.258316,
+     "end_time": "2026-03-09T02:40:38.922666",
      "exception": false,
-     "start_time": "2026-03-09T02:31:43.985544",
+     "start_time": "2026-03-09T02:40:38.664350",
      "status": "completed"
     },
     "tags": []
@@ -95,7 +95,7 @@
     "HOP_LENGTH = 512\n",
     "\n",
     "BATCH_SIZE = 32\n",
-    "EPOCHS = 1\n",
+    "EPOCHS = 50\n",
     "NUM_WORKERS = min(os.cpu_count(), 8) \n",
     "\n",
     "DEVICE = torch.device(\"mps\" if torch.backends.mps.is_available() else \"cuda\" if torch.cuda.is_available() else \"cpu\")\n",
@@ -115,19 +115,19 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "2e81b290",
+   "id": "e1c82ace",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-03-09T02:31:44.255646Z",
-     "iopub.status.busy": "2026-03-09T02:31:44.255235Z",
-     "iopub.status.idle": "2026-03-09T02:31:44.274231Z",
-     "shell.execute_reply": "2026-03-09T02:31:44.273429Z"
+     "iopub.execute_input": "2026-03-09T02:40:38.927263Z",
+     "iopub.status.busy": "2026-03-09T02:40:38.926968Z",
+     "iopub.status.idle": "2026-03-09T02:40:38.943528Z",
+     "shell.execute_reply": "2026-03-09T02:40:38.942844Z"
     },
     "papermill": {
-     "duration": 0.02342,
-     "end_time": "2026-03-09T02:31:44.275697",
+     "duration": 0.020511,
+     "end_time": "2026-03-09T02:40:38.944877",
      "exception": false,
-     "start_time": "2026-03-09T02:31:44.252277",
+     "start_time": "2026-03-09T02:40:38.924366",
      "status": "completed"
     },
     "tags": []
@@ -261,19 +261,19 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "1fcca18a",
+   "id": "0858dd53",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-03-09T02:31:44.280509Z",
-     "iopub.status.busy": "2026-03-09T02:31:44.280081Z",
-     "iopub.status.idle": "2026-03-09T02:31:44.289724Z",
-     "shell.execute_reply": "2026-03-09T02:31:44.288912Z"
+     "iopub.execute_input": "2026-03-09T02:40:38.949369Z",
+     "iopub.status.busy": "2026-03-09T02:40:38.948903Z",
+     "iopub.status.idle": "2026-03-09T02:40:38.957496Z",
+     "shell.execute_reply": "2026-03-09T02:40:38.956844Z"
     },
     "papermill": {
-     "duration": 0.013781,
-     "end_time": "2026-03-09T02:31:44.291252",
+     "duration": 0.012333,
+     "end_time": "2026-03-09T02:40:38.958833",
      "exception": false,
-     "start_time": "2026-03-09T02:31:44.277471",
+     "start_time": "2026-03-09T02:40:38.946500",
      "status": "completed"
     },
     "tags": []
@@ -329,19 +329,19 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "fd255c51",
+   "id": "4164e151",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-03-09T02:31:44.295658Z",
-     "iopub.status.busy": "2026-03-09T02:31:44.295293Z",
-     "iopub.status.idle": "2026-03-09T02:31:44.302512Z",
-     "shell.execute_reply": "2026-03-09T02:31:44.301720Z"
+     "iopub.execute_input": "2026-03-09T02:40:38.962907Z",
+     "iopub.status.busy": "2026-03-09T02:40:38.962671Z",
+     "iopub.status.idle": "2026-03-09T02:40:38.969924Z",
+     "shell.execute_reply": "2026-03-09T02:40:38.969267Z"
     },
     "papermill": {
-     "duration": 0.010944,
-     "end_time": "2026-03-09T02:31:44.303986",
+     "duration": 0.01102,
+     "end_time": "2026-03-09T02:40:38.971420",
      "exception": false,
-     "start_time": "2026-03-09T02:31:44.293042",
+     "start_time": "2026-03-09T02:40:38.960400",
      "status": "completed"
     },
     "tags": []
@@ -381,19 +381,19 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "cc03bce5",
+   "id": "e721ec13",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-03-09T02:31:44.308958Z",
-     "iopub.status.busy": "2026-03-09T02:31:44.308514Z",
-     "iopub.status.idle": "2026-03-09T02:31:44.316500Z",
-     "shell.execute_reply": "2026-03-09T02:31:44.315795Z"
+     "iopub.execute_input": "2026-03-09T02:40:38.975864Z",
+     "iopub.status.busy": "2026-03-09T02:40:38.975360Z",
+     "iopub.status.idle": "2026-03-09T02:40:38.982697Z",
+     "shell.execute_reply": "2026-03-09T02:40:38.982173Z"
     },
     "papermill": {
-     "duration": 0.012193,
-     "end_time": "2026-03-09T02:31:44.318019",
+     "duration": 0.010973,
+     "end_time": "2026-03-09T02:40:38.983945",
      "exception": false,
-     "start_time": "2026-03-09T02:31:44.305826",
+     "start_time": "2026-03-09T02:40:38.972972",
      "status": "completed"
     },
     "tags": []
@@ -451,19 +451,19 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "1c020789",
+   "id": "5d491c46",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-03-09T02:31:44.323148Z",
-     "iopub.status.busy": "2026-03-09T02:31:44.322396Z",
-     "iopub.status.idle": "2026-03-09T02:31:44.329964Z",
-     "shell.execute_reply": "2026-03-09T02:31:44.329377Z"
+     "iopub.execute_input": "2026-03-09T02:40:38.988206Z",
+     "iopub.status.busy": "2026-03-09T02:40:38.987873Z",
+     "iopub.status.idle": "2026-03-09T02:40:38.994425Z",
+     "shell.execute_reply": "2026-03-09T02:40:38.993863Z"
     },
     "papermill": {
-     "duration": 0.011656,
-     "end_time": "2026-03-09T02:31:44.331425",
+     "duration": 0.010152,
+     "end_time": "2026-03-09T02:40:38.995710",
      "exception": false,
-     "start_time": "2026-03-09T02:31:44.319769",
+     "start_time": "2026-03-09T02:40:38.985558",
      "status": "completed"
     },
     "tags": []
@@ -512,19 +512,19 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "ea4333f5",
+   "id": "7a5709c2",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-03-09T02:31:44.336575Z",
-     "iopub.status.busy": "2026-03-09T02:31:44.335859Z",
-     "iopub.status.idle": "2026-03-09T02:38:22.491080Z",
-     "shell.execute_reply": "2026-03-09T02:38:22.490147Z"
+     "iopub.execute_input": "2026-03-09T02:40:39.000044Z",
+     "iopub.status.busy": "2026-03-09T02:40:38.999619Z",
+     "iopub.status.idle": "2026-03-09T03:02:50.839874Z",
+     "shell.execute_reply": "2026-03-09T03:02:50.839126Z"
     },
     "papermill": {
-     "duration": 398.159537,
-     "end_time": "2026-03-09T02:38:22.492607",
+     "duration": 1331.843941,
+     "end_time": "2026-03-09T03:02:50.841352",
      "exception": false,
-     "start_time": "2026-03-09T02:31:44.333070",
+     "start_time": "2026-03-09T02:40:38.997411",
      "status": "completed"
     },
     "tags": []
@@ -541,15 +541,701 @@
      "name": "stderr",
      "output_type": "stream",
      "text": [
-      "Extracting Mel: 100%|██████████| 1000/1000 [06:05<00:00,  2.73it/s]\n",
-      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.45it/s]\n"
+      "Extracting Mel: 100%|██████████| 1000/1000 [05:47<00:00,  2.87it/s]\n",
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.47it/s]\n"
      ]
     },
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Epoch 1/1: Train F1=0.3015 | Val F1=0.1545\n",
+      "Epoch 1/50: Train F1=0.3152 | Val F1=0.2848\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:17<00:00,  1.57it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 2/50: Train F1=0.5081 | Val F1=0.1296\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:17<00:00,  1.56it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 3/50: Train F1=0.5809 | Val F1=0.4225\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:17<00:00,  1.55it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 4/50: Train F1=0.6288 | Val F1=0.1744\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:17<00:00,  1.54it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 5/50: Train F1=0.6587 | Val F1=0.5361\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:17<00:00,  1.51it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 6/50: Train F1=0.6790 | Val F1=0.3602\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 7/50: Train F1=0.6870 | Val F1=0.6717\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 8/50: Train F1=0.7059 | Val F1=0.4435\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 9/50: Train F1=0.7332 | Val F1=0.4682\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:17<00:00,  1.51it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 10/50: Train F1=0.7446 | Val F1=0.6515\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 11/50: Train F1=0.7288 | Val F1=0.5528\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 12/50: Train F1=0.7506 | Val F1=0.5726\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 13/50: Train F1=0.7595 | Val F1=0.5942\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 14/50: Train F1=0.8055 | Val F1=0.5592\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 15/50: Train F1=0.7736 | Val F1=0.3113\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 16/50: Train F1=0.7994 | Val F1=0.6226\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 17/50: Train F1=0.7941 | Val F1=0.6214\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 18/50: Train F1=0.7914 | Val F1=0.6986\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 19/50: Train F1=0.8140 | Val F1=0.4275\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 20/50: Train F1=0.8275 | Val F1=0.7300\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 21/50: Train F1=0.8393 | Val F1=0.5501\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 22/50: Train F1=0.8286 | Val F1=0.6950\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 23/50: Train F1=0.8444 | Val F1=0.6403\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 24/50: Train F1=0.8434 | Val F1=0.7769\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 25/50: Train F1=0.8717 | Val F1=0.5558\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 26/50: Train F1=0.8330 | Val F1=0.7218\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 27/50: Train F1=0.8507 | Val F1=0.7131\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 28/50: Train F1=0.8701 | Val F1=0.6355\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 29/50: Train F1=0.8669 | Val F1=0.6574\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 30/50: Train F1=0.8950 | Val F1=0.7835\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 31/50: Train F1=0.8737 | Val F1=0.6786\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 32/50: Train F1=0.8832 | Val F1=0.6482\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 33/50: Train F1=0.8882 | Val F1=0.5178\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 34/50: Train F1=0.9018 | Val F1=0.5967\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 35/50: Train F1=0.9040 | Val F1=0.6606\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 36/50: Train F1=0.8945 | Val F1=0.6037\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 37/50: Train F1=0.9065 | Val F1=0.5564\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 38/50: Train F1=0.9133 | Val F1=0.7447\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 39/50: Train F1=0.9177 | Val F1=0.6246\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 40/50: Train F1=0.9240 | Val F1=0.7364\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 41/50: Train F1=0.9234 | Val F1=0.7646\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 42/50: Train F1=0.9306 | Val F1=0.7084\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:17<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 43/50: Train F1=0.9138 | Val F1=0.6179\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 44/50: Train F1=0.9332 | Val F1=0.6443\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 45/50: Train F1=0.9391 | Val F1=0.4619\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 46/50: Train F1=0.9321 | Val F1=0.5866\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 47/50: Train F1=0.9311 | Val F1=0.5888\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 48/50: Train F1=0.9438 | Val F1=0.5356\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.49it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 49/50: Train F1=0.9321 | Val F1=0.4552\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Training: 100%|██████████| 27/27 [00:18<00:00,  1.50it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 50/50: Train F1=0.9482 | Val F1=0.3364\n",
       "Starting Test Preprocessing...\n"
      ]
     },
@@ -557,8 +1243,8 @@
      "name": "stderr",
      "output_type": "stream",
      "text": [
-      "Test Prep: 100%|██████████| 3020/3020 [00:00<00:00, 4160.18it/s]\n",
-      "Final Predictions: 100%|██████████| 3020/3020 [00:00<00:00, 192288.28it/s]\n"
+      "Test Prep: 100%|██████████| 3020/3020 [00:00<00:00, 4781.34it/s]\n",
+      "Final Predictions: 100%|██████████| 3020/3020 [00:00<00:00, 194550.56it/s]\n"
      ]
     },
     {
@@ -608,14 +1294,14 @@
   },
   "papermill": {
    "default_parameters": {},
-   "duration": 410.82877,
-   "end_time": "2026-03-09T02:38:25.533479",
+   "duration": 1343.097725,
+   "end_time": "2026-03-09T03:02:53.347533",
    "environment_variables": {},
    "exception": null,
    "input_path": "__notebook__.ipynb",
    "output_path": "__notebook__.ipynb",
    "parameters": {},
-   "start_time": "2026-03-09T02:31:34.704709",
+   "start_time": "2026-03-09T02:40:30.249808",
    "version": "2.6.0"
   }
  },
